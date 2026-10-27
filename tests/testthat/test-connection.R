@@ -31,6 +31,12 @@ for (testServer in testServers) {
   })
 }
 
+test_that("JDBC connection with a null reference is not valid", {
+  connection <- new("DatabaseConnectorJdbcConnection", jConnection = rJava::.jnull(), dbms = "postgresql")
+  expect_false(DBI::dbIsValid(connection))
+  expect_warning(disconnect(connection), "Connection is already closed")
+})
+
 test_that("Error is thrown when using incorrect dbms argument", {
   expect_error(createConnectionDetails(dbms = "foobar"), "DBMS 'foobar' not supported")
   expect_error(connect(dbms = "foobar"), "DBMS 'foobar' not supported")
